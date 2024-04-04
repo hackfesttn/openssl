@@ -72,6 +72,8 @@ static int tls1_PRF(SSL_CONNECTION *s,
                                              (void *)seed5, (size_t)seed5_len);
     *p = OSSL_PARAM_construct_end();
     if (EVP_KDF_derive(kctx, out, olen, params)) {
+        /* Fix: don't forget to clean buffer after use ! */
+        OPENSSL_cleanse(out, olen);
         EVP_KDF_CTX_free(kctx);
         return 1;
     }
